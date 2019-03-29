@@ -248,7 +248,14 @@ or something else), it's likely that you'll be able to use a fold.
     [<Test>]
     let ``16 Folding, the hard way`` () =
         let fold (f : 'a -> 'b -> 'a) (initialState : 'a) (xs : 'b list) : 'a =
-            List.fold f initialState xs // write a function to do a fold.
+            let rec foldlist list acc = 
+                match list with 
+                    |a::b -> let acc = (f) acc a 
+                             foldlist b acc
+                    |_ -> acc
+            match initialState with
+            |_ -> foldlist xs initialState
+                    // write a function to do a fold.
         fold (+) 0 [1;2;3;4] |> should equal 10
         fold (*) 2 [1;2;3;4] |> should equal 48
         fold (fun state item -> sprintf "%s %s" state item) "items:" ["dog"; "cat"; "bat"; "rat"]
