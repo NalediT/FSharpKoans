@@ -46,9 +46,9 @@ module ``10: Parametric polymorphism`` =
     [<Test>]
     let ``01 id: the simplest built-in generic function`` () =
         // `id` is the identify function: it takes an input ... and gives it back immediately.
-        id 8 |> should equal __
-        id 7.6 |> should equal __
-        id "wut!" |> should equal __
+        id 8 |> should equal 8
+        id 7.6 |> should equal 7.6
+        id "wut!" |> should equal "wut!"
         // id can be surprisingly useful.  Remember it :).
 
     [<Test>]
@@ -66,9 +66,9 @@ module ``10: Parametric polymorphism`` =
     }
     // we might create this with: { Something=5; Blah=8; Otherwise=9.3; What=77,"hi",0.88 }
 
-    type MyRecord = {
-        Who : FILL_ME_IN // <-- should be generic
-        What : FILL_ME_IN // <-- should be generic, and a different type to Who
+    type MyRecord<'x,'y> = {
+        Who : 'x  // <-- should be generic
+        What : 'y // <-- should be generic, and a different type to Who
         Where : string
     }
 
@@ -94,8 +94,8 @@ module ``10: Parametric polymorphism`` =
         let a = Secnod (6.55, 7)
         let b = Thrid (fun k -> true, k, 8)
         // how do you write a generic type?
-        a |> should be ofType<FILL_ME_IN>
-        b |> should be ofType<FILL_ME_IN>
+        a |> should be ofType<'a -> 'b>
+        b |> should be ofType<'a -> ('b * 'a * int)>
 
     type MyDiscriminatedUnion =
     | Furoth of FILL_ME_IN
