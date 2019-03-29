@@ -43,8 +43,35 @@ open NUnit.Framework
 *)
 
 module ``10: Parametric polymorphism`` =
+    (*
+        The next test demonstrates *type inference*.
+        
+        Not all functional languages are typed.  The first (and, arguably, the most powerful)
+        functional language was Lisp, and Lisp isn't strongly typed.  Typing is something that tends
+        to work very well with functional programming, but isn't something that is essential to
+        functional programming.  In the case of F#, typing often stops you from making "silly" errors.
+
+        F# uses type inference extensively.  Type inference means that it tries to work out
+        (or "infer") what type a particular name is by looking at code around it.  A readable, if
+        simplified, explanation of how this works can be found at:
+        http://fsharpforfunandprofit.com/posts/type-inference/
+    *)
+   
     [<Test>]
-    let ``01 id: the simplest built-in generic function`` () =
+    let ``01 The type of symbols in variable patterns are inferred`` () = 
+        let x = 50
+        let y = "a string"
+        let z = -4.23
+        let a = false
+        let b = 't'
+        x |> should be ofType<int>
+        y |> should be ofType<string>
+        z |> should be ofType<float>
+        a |> should be ofType<bool>
+        b |> should be ofType<char>
+
+    [<Test>]
+    let ``02 id: the simplest built-in generic function`` () =
         // `id` is the identify function: it takes an input ... and gives it back immediately.
         id 8 |> should equal 8
         id 7.6 |> should equal 7.6
@@ -52,8 +79,8 @@ module ``10: Parametric polymorphism`` =
         // id can be surprisingly useful.  Remember it :).
 
     [<Test>]
-    let ``02 Defining a generic function`` () =
-        let f x y = __
+    let ``03 Defining a generic function`` () =
+        let f x y = (x,y,y)
         f 4 5 |> should equal (4, 5, 5)
         f "k" 'p' |> should equal ("k", 'p', 'p')
 
@@ -73,10 +100,10 @@ module ``10: Parametric polymorphism`` =
     }
 
     [<Test>]
-    let ``03 Creating a generic record`` () =
+    let ``04 Creating a generic record`` () =
         // You need to edit the definition of MyRecord first!  It's just above this test.
-        let a = __
-        let b = __  
+        let a = {Who="The Doctor";What=4.53;Where="TTFN"}
+        let b = {Who='R';What=false;Where="tiffin"}
         a.Who |> should equal "The Doctor"
         b.Who |> should equal 'R'
         a.What |> should equal 4.53
@@ -90,25 +117,25 @@ module ``10: Parametric polymorphism`` =
     | Thrid of ('a -> ('b * 'a * int)) // <-- this shouldn't look odd.  Functions are first-class!
 
     [<Test>]
-    let ``04 Creating a generic discriminated union (Part 1).`` () =
+    let ``05 Creating a generic discriminated union (Part 1).`` () =
         let a = Secnod (6.55, 7)
         let b = Thrid (fun k -> true, k, 8)
         // how do you write a generic type?
-        a |> should be ofType<'a -> 'b>
-        b |> should be ofType<'a -> ('b * 'a * int)>
+        a |> should be ofType<GenericDiscriminatedUnionExample<float,int>>
+        b |> should be ofType<GenericDiscriminatedUnionExample<'a,bool>>
 
-    type MyDiscriminatedUnion =
-    | Furoth of FILL_ME_IN
+    type MyDiscriminatedUnion<'a,'b> =
+    | Furoth of 'a
     | Fevi
-    | Sxi of FILL_ME_IN
+    | Sxi of 'b
 
     [<Test>]
-    let ``05 Creating a generic discriminated union (Part 2).`` () =
+    let ``06 Creating a generic discriminated union (Part 2).`` () =
         // You need to edit the definition of MyDiscriminatedUnion first!  It's just above this test.
-        let a = __
-        let b = __
-        let c = __
-        let d = __
+        let a = Furoth(7)
+        let b = Sxi("bleh")
+        let c = Furoth('t')
+        let d = Sxi(true)
         match a with
         | Furoth n -> n |> should equal 7
         | _ -> Assert.Fail ()
